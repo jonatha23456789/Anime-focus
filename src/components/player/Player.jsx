@@ -241,7 +241,11 @@ export default function Player({
       autoOrientation: true,
       fastForward: true,
       aspectRatio: true,
-      subtitleOffset: true,
+      moreVideoAttr: {
+        crossOrigin: 'anonymous',
+        preload: 'none',
+        playsInline: true,
+      },
       plugins: [
         artplayerPluginHlsControl({
           quality: {
