@@ -15,6 +15,7 @@ import Error from "@/src/components/error/Error";
 import { useLanguage } from "@/src/context/LanguageContext";
 import { useHomeInfo } from "@/src/context/HomeInfoContext";
 import Voiceactor from "@/src/components/voiceactor/Voiceactor";
+import AnimeRating from "@/src/components/rating/AnimeRating";
 
 function InfoItem({ label, value, isProducer = true }) {
   return (
@@ -244,6 +245,11 @@ function AnimeInfo({ random = false }) {
                 <p className="text-lg font-medium">Not released</p>
               </Link>
             )}
+            <AnimeRating 
+              animeId={animeInfo.id} 
+              animeTitle={title}
+              className="mt-4"
+            />
             {info?.Overview && (
               <div className="text-[14px] mt-2 max-[575px]:hidden">
                 {info.Overview.length > 270 ? (

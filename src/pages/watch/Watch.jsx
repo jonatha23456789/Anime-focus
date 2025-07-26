@@ -22,6 +22,7 @@ import SidecardLoader from "@/src/components/Loader/Sidecard.loader";
 import Voiceactor from "@/src/components/voiceactor/Voiceactor";
 import Watchcontrols from "@/src/components/watchcontrols/Watchcontrols";
 import useWatchControl from "@/src/hooks/useWatchControl";
+import AnimeRating from "@/src/components/rating/AnimeRating";
 
 export default function Watch() {
   const location = useLocation();
@@ -467,6 +468,11 @@ export default function Watch() {
               >
                 View detail
               </Link>
+              <AnimeRating 
+                animeId={animeId} 
+                animeTitle={animeInfo?.title}
+                className="mt-4"
+              />
               <div className="mt-8 bg-[#11101A] rounded-lg p-4">
                 <p className="text-center mb-4">please donate to help the website to grow 🙏🥺?</p>
                 <div className="grid grid-cols-2 gap-2">
