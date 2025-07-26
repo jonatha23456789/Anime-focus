@@ -1,4 +1,4 @@
-import { faBackward, faForward } from "@fortawesome/free-solid-svg-icons";
+import { faBackward, faForward, faCamera } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useEffect, useState } from "react";
 
@@ -25,6 +25,7 @@ export default function WatchControls({
   episodeId,
   episodes = [],
   onButtonClick,
+  animeInfo,
 }) {
   const [currentEpisodeIndex, setCurrentEpisodeIndex] = useState(
     episodes?.findIndex(
@@ -40,6 +41,62 @@ export default function WatchControls({
       setCurrentEpisodeIndex(newIndex);
     }
   }, [episodeId, episodes]);
+
+  const takeScreenshot = async () => {
+    try {
+      const playerElement = document.querySelector('.player video');
+      if (!playerElement) {
+        alert('Video player not found');
+        return;
+      }
+
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      
+      // Set canvas dimensions to match video
+      canvas.width = playerElement.videoWidth || playerElement.clientWidth;
+      canvas.height = playerElement.videoHeight || playerElement.clientHeight;
+      
+      // Draw video frame to canvas
+      ctx.drawImage(playerElement, 0, 0, canvas.width, canvas.height);
+      
+      // Convert to blob and download
+      canvas.toBlob((blob) => {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${animeInfo?.title || 'anime'}_episode_${episodeId}_screenshot.png`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }, 'image/png');
+      
+      // Show notification
+      const notification = document.createElement('div');
+      notification.textContent = 'Screenshot saved!';
+      notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: #4CAF50;
+        color: white;
+        padding: 10px 20px;
+        border-radius: 5px;
+        z-index: 9999;
+        font-family: Arial, sans-serif;
+      `;
+      document.body.appendChild(notification);
+      
+      setTimeout(() => {
+        document.body.removeChild(notification);
+      }, 3000);
+      
+    } catch (error) {
+      console.error('Screenshot failed:', error);
+      alert('Failed to take screenshot. This might be due to CORS restrictions.');
+    }
+  };
 
   return (
     <div className="bg-[#11101A] w-full flex justify-between flex-wrap px-4 pt-4 max-[1200px]:bg-[#14151A] max-[375px]:flex-col max-[375px]:gap-y-2">
@@ -74,6 +131,16 @@ export default function WatchControls({
           <FontAwesomeIcon
             icon={faBackward}
             className="text-[20px] max-[575px]:text-[16px] text-white"
+          />
+        </button>
+        <button
+          onClick={takeScreenshot}
+          className="text-white hover:text-[#ffbade] transition-colors duration-200"
+          title="Take Screenshot"
+        >
+          <FontAwesomeIcon
+            icon={faCamera}
+            className="text-[20px] max-[575px]:text-[16px]"
           />
         </button>
         <button

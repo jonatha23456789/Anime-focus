@@ -13,7 +13,6 @@ import CategoryCard from "@/src/components/categorycard/CategoryCard";
 import {
   faClosedCaptioning,
   faMicrophone,
-  faCamera,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Servers from "@/src/components/servers/Servers";
@@ -69,61 +68,7 @@ export default function Watch() {
     setAutoNext,
   } = useWatchControl();
 
-  const takeScreenshot = async () => {
-    try {
-      const playerElement = document.querySelector('.player video');
-      if (!playerElement) {
-        alert('Video player not found');
-        return;
-      }
-
-      const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d');
-      
-      // Set canvas dimensions to match video
-      canvas.width = playerElement.videoWidth || playerElement.clientWidth;
-      canvas.height = playerElement.videoHeight || playerElement.clientHeight;
-      
-      // Draw video frame to canvas
-      ctx.drawImage(playerElement, 0, 0, canvas.width, canvas.height);
-      
-      // Convert to blob and download
-      canvas.toBlob((blob) => {
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `${animeInfo?.title || 'anime'}_episode_${episodeId}_screenshot.png`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-      }, 'image/png');
-      
-      // Show notification
-      const notification = document.createElement('div');
-      notification.textContent = 'Screenshot saved!';
-      notification.style.cssText = `
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        background: #4CAF50;
-        color: white;
-        padding: 10px 20px;
-        border-radius: 5px;
-        z-index: 9999;
-        font-family: Arial, sans-serif;
-      `;
-      document.body.appendChild(notification);
-      
-      setTimeout(() => {
-        document.body.removeChild(notification);
-      }, 3000);
-      
-    } catch (error) {
-      console.error('Screenshot failed:', error);
-      alert('Failed to take screenshot. This might be due to CORS restrictions.');
-    }
-  };
+  
 
   useEffect(() => {
     if (!episodes || episodes.length === 0) return;
@@ -284,14 +229,7 @@ export default function Watch() {
             </div>
             <div className="player w-full h-fit bg-black flex flex-col">
               <div className="w-full relative h-[480px] max-[1400px]:h-[40vw] max-[1200px]:h-[48vw] max-[1024px]:h-[58vw] max-[600px]:h-[65vw]">
-                {/* Screenshot Button */}
-                <button
-                  onClick={takeScreenshot}
-                  className="absolute top-4 right-4 z-50 bg-black bg-opacity-50 hover:bg-opacity-70 text-white p-2 rounded-full transition-all duration-200 backdrop-blur-sm"
-                  title="Take Screenshot"
-                >
-                  <FontAwesomeIcon icon={faCamera} className="text-lg" />
-                </button>
+                
                 {!buffering ? (
                   <Player
                     streamUrl={streamUrl}
@@ -345,6 +283,7 @@ export default function Watch() {
                   totalEpisodes={totalEpisodes}
                   episodeId={episodeId}
                   onButtonClick={(id) => setEpisodeId(id)}
+                  animeInfo={animeInfo}
                 />
               )}
               <Servers
