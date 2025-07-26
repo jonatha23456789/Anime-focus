@@ -68,8 +68,6 @@ export default function Watch() {
     setAutoNext,
   } = useWatchControl();
 
-  
-
   useEffect(() => {
     if (!episodes || episodes.length === 0) return;
 
