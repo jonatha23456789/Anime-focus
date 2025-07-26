@@ -22,7 +22,6 @@ import SidecardLoader from "@/src/components/Loader/Sidecard.loader";
 import Voiceactor from "@/src/components/voiceactor/Voiceactor";
 import Watchcontrols from "@/src/components/watchcontrols/Watchcontrols";
 import useWatchControl from "@/src/hooks/useWatchControl";
-import { faCameraRetro } from "@fortawesome/free-solid-svg-icons";
 
 export default function Watch() {
   const location = useLocation();
@@ -69,66 +68,14 @@ export default function Watch() {
     setAutoNext,
   } = useWatchControl();
 
-  const takeScreenshot = async () => {
-    try {
-      const video = document.querySelector('.art-video');
-      if (!video) {
-        alert('Video player not found');
-        return;
-      }
-
-      const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d');
-      
-      canvas.width = video.videoWidth;
-      canvas.height = video.videoHeight;
-      
-      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-      
-      canvas.toBlob((blob) => {
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `${animeInfo?.title || 'anime'}-episode-${episodeId}-screenshot.png`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-      }, 'image/png');
-      
-      // Show success message
-      const notification = document.createElement('div');
-      notification.textContent = 'Screenshot saved!';
-      notification.style.cssText = `
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        background: #4CAF50;
-        color: white;
-        padding: 10px 15px;
-        border-radius: 5px;
-        z-index: 9999;
-        font-family: sans-serif;
-      `;
-      document.body.appendChild(notification);
-      setTimeout(() => {
-        document.body.removeChild(notification);
-      }, 3000);
-      
-    } catch (error) {
-      console.error('Screenshot failed:', error);
-      alert('Failed to take screenshot. Make sure the video is playing.');
-    }
-  };
-
   useEffect(() => {
     if (!episodes || episodes.length === 0) return;
-
+    
     const isValidEpisode = episodes.some(ep => {
       const epNumber = ep.id.split('ep=')[1];
       return epNumber === episodeId; 
     });
-
+    
     // If missing or invalid episodeId, fallback to first
     if (!episodeId || !isValidEpisode) {
       const fallbackId = episodes[0].id.match(/ep=(\d+)/)?.[1];
@@ -137,7 +84,7 @@ export default function Watch() {
       }
       return;
     }
-
+  
     const newUrl = `/watch/${animeId}?ep=${episodeId}`;
     if (isFirstSet.current) {
       navigate(newUrl, { replace: true });
@@ -233,7 +180,7 @@ export default function Watch() {
         <img
           src={
             !animeInfoLoading
-              ? `https://wsrv.nl/?url=${animeInfo?.poster}`
+              ? `${animeInfo?.poster}`
               : "https://i.postimg.cc/rFZnx5tQ/2-Kn-Kzog-md.webp"
           }
           alt={`${animeInfo?.title} Poster`}
@@ -335,23 +282,13 @@ export default function Watch() {
                   onButtonClick={(id) => setEpisodeId(id)}
                 />
               )}
-              <div className="flex items-center justify-between bg-[#11101A] p-4">
-                <Servers
-                  servers={servers}
-                  activeEpisodeNum={activeEpisodeNum}
-                  activeServerId={activeServerId}
-                  setActiveServerId={setActiveServerId}
-                  serverLoading={serverLoading}
-                />
-                <button
-                  onClick={takeScreenshot}
-                  className="flex items-center gap-2 bg-[#FFBADE] text-black px-4 py-2 rounded-lg hover:bg-[#ff9ec7] transition-colors duration-200"
-                  title="Take Screenshot"
-                >
-                  <FontAwesomeIcon icon={faCameraRetro} className="text-sm" />
-                  <span className="text-sm font-medium">Screenshot</span>
-                </button>
-              </div>
+              <Servers
+                servers={servers}
+                activeEpisodeNum={activeEpisodeNum}
+                activeServerId={activeServerId}
+                setActiveServerId={setActiveServerId}
+                serverLoading={serverLoading}
+              />
               {seasons?.length > 0 && (
                 <div className="flex flex-col gap-y-2 bg-[#11101A] p-4">
                   <h1 className="w-fit text-lg max-[478px]:text-[18px] font-semibold">
@@ -423,10 +360,10 @@ export default function Watch() {
                 )}
             </div>
           </div>
-          <div className="flex flex-col gap-y-4 items-start ml-8 max-[1400px]:ml-0 max-[1400px]:flex-row max-[1400px]:gap-x-6 max-[1024px]:px-[30px] max-[1024px]:mt-8 max-[500px]:mt-4 max-[500px]:px-4">
+          <div className="flex flex-col gap-y-4 items-start ml-8 max-[1400px]:ml-0 max-[1400px]:mt-10 max-[1400px]:flex-row max-[1400px]:gap-x-6 max-[1024px]:px-[30px] max-[1024px]:mt-8 max-[500px]:mt-4 max-[500px]:px-4">
             {animeInfo && animeInfo?.poster ? (
               <img
-                src={`https://wsrv.nl/?url=${animeInfo?.poster}`}
+                src={`${animeInfo?.poster}`}
                 alt=""
                 className="w-[100px] h-[150px] object-cover max-[500px]:w-[70px] max-[500px]:h-[90px]"
               />
@@ -528,43 +465,6 @@ export default function Watch() {
               >
                 View detail
               </Link>
-              
-              <div className="mt-8 bg-[#11101A] rounded-lg p-4">
-                <p className="text-center mb-4">please donate to help the website to grow 🙏🥺?</p>
-                <div className="grid grid-cols-2 gap-2">
-                  <a 
-                    href="https://ko-fi.com/animefocus51327" 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="flex items-center justify-center gap-2 bg-[#201F23] hover:bg-[#2a292f] rounded-lg p-3 cursor-pointer"
-                  >
-                    <i className="fas fa-donate" style={{color:'#08c'}}></i>
-                    <span>Donate</span>
-                  </a>
-                  <a
-                    href="https://discord.gg/kKnrGVqkr7"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center justify-center gap-2 bg-[#201F23] hover:bg-[#2a292f] rounded-lg p-3 cursor-pointer"
-                  >
-                    <i className="fab fa-discord" style={{color:'#6f85d5'}}></i>
-                    <span>Join Discord</span>
-                  </a>
-                  <div className="col-span-2 mt-4">
-                    <a 
-                      href="https://ko-fi.com/animefocus51327" 
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      <img 
-                        src="https://img.buymeacoffee.com/button-api/?text=Buy me a coffee&emoji=&slug=naoussisuzz&button_colour=ba279d&font_colour=ffffff&font_family=Cookie&outline_colour=ffffff&coffee_colour=FFDD00"
-                        alt="Buy Me A Coffee"
-                        className="w-full"
-                      />
-                    </a>
-                  </div>
-                </div>
-              </div>
             </div>
           </div>
         </div>
@@ -614,8 +514,8 @@ export default function Watch() {
               limit={10}
             />
           )}
-            </div>
-          </div>
+        </div>
       </div>
+    </div>
   );
 }
