@@ -1,3 +1,3 @@
-const logoTitle="Zen!me"
+const logoTitle="Anime Focus"
 
 export default logoTitle;
