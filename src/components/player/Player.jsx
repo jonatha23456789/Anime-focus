@@ -274,7 +274,7 @@ export default function Player({
       },
       layers: [
         {
-          name: website_name,
+          name: website_name.replace(/\s+/g, '-'),
           html: logo,
           tooltip: website_name,
           style: {
