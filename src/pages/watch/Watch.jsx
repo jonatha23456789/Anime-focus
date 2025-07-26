@@ -379,7 +379,7 @@ export default function Watch() {
                         </p>
                         <div className="absolute inset-0 z-10 bg-[url('https://i.postimg.cc/pVGY6RXd/thumb.png')] bg-repeat"></div>
                         <img
-                          src={`https://wsrv.nl/?url=${season.season_poster}`}
+                          src={`${season.season_poster}`}
                           alt=""
                           className="w-full h-full object-cover blur-[3px] opacity-50"
                         />
