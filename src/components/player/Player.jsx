@@ -241,11 +241,7 @@ export default function Player({
       autoOrientation: true,
       fastForward: true,
       aspectRatio: true,
-      moreVideoAttr: {
-        crossOrigin: 'anonymous',
-        preload: 'none',
-        playsInline: true,
-      },
+      subtitleOffset: true,
       plugins: [
         artplayerPluginHlsControl({
           quality: {
@@ -400,7 +396,7 @@ export default function Player({
     });
     art.on("ready", () => {
       setTimeout(() => {
-        art.layers[website_name].style.opacity = 0;
+        art.layers[website_name.replace(/\s+/g, '-')].style.opacity = 0;
       }, 2000);
       const ranges = [
         ...(intro.start != null && intro.end != null
